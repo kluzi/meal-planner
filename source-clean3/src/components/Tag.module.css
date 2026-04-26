@@ -1,0 +1,19 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Sizes */
+.sm  { font-size: 8px;  padding: 1px 4px; }
+.md  { font-size: 10px; padding: 3px 7px; border-radius: 6px; }
+.lg  { font-size: 11px; padding: 4px 10px; border-radius: 20px; }
+
+/* Colors */
+.t-fave { background: var(--t-fave-bg); color: var(--t-fave); }
+.t-fast { background: var(--t-fast-bg); color: var(--t-fast); }
+.t-wknd { background: var(--t-wknd-bg); color: var(--t-wknd); }
+.t-kids { background: var(--t-kids-bg); color: var(--t-kids); }
+.t-veg  { background: var(--t-veg-bg);  color: var(--t-veg);  }

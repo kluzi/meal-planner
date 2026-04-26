@@ -1,0 +1,61 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --bg: #F2F2F7;
+  --card: #FFFFFF;
+  --accent: #0D9E82;
+  --accent-light: #E5F7F3;
+  --accent-hover: #0B8A71;
+  --text-1: #1C1C1E;
+  --text-2: #6C6C70;
+  --text-3: #AEAEB2;
+  --border: rgba(0, 0, 0, 0.07);
+  --shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  --radius: 12px;
+  --card-h: 92px;
+
+  /* Tags */
+  --t-fave-bg: #FFF0F3; --t-fave: #C0244A;
+  --t-fast-bg: #FFF5E5; --t-fast: #A05A00;
+  --t-wknd-bg: #EEF0FF; --t-wknd: #3543C4;
+  --t-kids-bg: #E8F0FF; --t-kids: #1A4FC4;
+  --t-veg-bg: #E5F7F3;  --t-veg: #0A6E58;
+
+  /* Safe areas (iPad) */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body, #root {
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+body {
+  background: var(--bg);
+  font-family: -apple-system, 'Helvetica Neue', sans-serif;
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar hidden globally */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+
+button, input {
+  font-family: inherit;
+}
