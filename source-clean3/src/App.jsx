@@ -9,7 +9,6 @@ import { usePlanning } from './hooks/usePlanning'
 
 const S = { PLANNING: 0, DETAIL: 1, SELECTOR: 2, LIBRARY: 3 }
 
-// Styles inline — aucune dépendance CSS module pour la navigation
 const baseScreen = {
   position: 'absolute',
   top: 0, left: 0,
@@ -36,7 +35,6 @@ export default function App() {
   const [selDi, setSelDi] = useState(null)
   const [selSi, setSelSi] = useState(null)
 
-  const goTo = useCallback((s) => setScreen(s), [])
   const goBack = useCallback(() => setScreen(S.PLANNING), [])
 
   const openDetail = useCallback((meal, di, si) => {
