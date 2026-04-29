@@ -71,7 +71,7 @@ export function PlanningScreen({
   flat.forEach(m => (m.tags || []).forEach(t => { if (counts[t] !== undefined) counts[t]++ }))
 
   return (
-    <div className={styles.screen}>
+    <div style={{display:'flex', flexDirection:'column', height:'100%', overflow:'hidden'}}>
       {/* ── Topbar ── */}
       <div className={styles.topbar}>
         <div className={styles.pageTitle}>Planning</div>
