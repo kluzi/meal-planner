@@ -1,5 +1,5 @@
 // src/components/MealCard.jsx
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { Tag } from './Tag'
 import styles from './MealCard.module.css'
 
@@ -9,9 +9,31 @@ const StarIcon = () => (
   </svg>
 )
 
-export function MealCard({ meal, di, si, onOpen, onSelect, onRegen, onValidate, onDrop }) {
+export function MealCard({ meal, di, si, onOpen, onSelect, onRegen, onValidate, onDragStart, onDrop }) {
   const [dragOver, setDragOver] = useState(false)
-  const dragRef = useRef(null)
+
+  const handleDragStart = (e) => {
+    e.dataTransfer.setData('text/plain', JSON.stringify({ di, si }))
+    e.dataTransfer.effectAllowed = 'move'
+    onDragStart?.(di, si)
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    setDragOver(true)
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    setDragOver(false)
+    try {
+      const src = JSON.parse(e.dataTransfer.getData('text/plain'))
+      if (src.di !== di || src.si !== si) {
+        onDrop?.(di, si)
+      }
+    } catch {}
+  }
 
   // ── Carte vide ──
   if (!meal) {
@@ -19,9 +41,9 @@ export function MealCard({ meal, di, si, onOpen, onSelect, onRegen, onValidate, 
       <div
         className={`${styles.card} ${styles.empty} ${dragOver ? styles.dragOver : ''}`}
         onClick={() => onSelect(di, si)}
-        onDragOver={e => { e.preventDefault(); setDragOver(true) }}
+        onDragOver={handleDragOver}
         onDragLeave={() => setDragOver(false)}
-        onDrop={e => { e.preventDefault(); setDragOver(false); onDrop?.(di, si) }}
+        onDrop={handleDrop}
       >
         <span className={styles.plus}>+</span>
       </div>
@@ -32,27 +54,21 @@ export function MealCard({ meal, di, si, onOpen, onSelect, onRegen, onValidate, 
   if (meal._ai && meal._aiPending) {
     return (
       <div
-        className={`${styles.card} ${styles.aiPending}`}
+        className={`${styles.card} ${styles.aiPending} ${dragOver ? styles.dragOver : ''}`}
         onClick={() => onOpen(meal, di, si)}
         draggable
-        onDragStart={e => { e.dataTransfer.setData('text/plain', JSON.stringify({ di, si })) }}
-        onDragOver={e => { e.preventDefault(); setDragOver(true) }}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
         onDragLeave={() => setDragOver(false)}
-        onDrop={e => { e.preventDefault(); setDragOver(false); onDrop?.(di, si) }}
+        onDrop={handleDrop}
       >
         <div className={styles.aiLabel}>
           <StarIcon /> Suggestion IA
         </div>
         <div className={styles.name}>{meal.name}</div>
         <div className={styles.aiActions}>
-          <button
-            className={styles.aiRegen}
-            onClick={e => { e.stopPropagation(); onRegen(di, si) }}
-          >↺ Autre idée</button>
-          <button
-            className={styles.aiValidate}
-            onClick={e => { e.stopPropagation(); onValidate(di, si) }}
-          >✓ Valider</button>
+          <button className={styles.aiRegen} onClick={e => { e.stopPropagation(); onRegen(di, si) }}>↺ Autre</button>
+          <button className={styles.aiValidate} onClick={e => { e.stopPropagation(); onValidate(di, si) }}>✓ OK</button>
         </div>
       </div>
     )
@@ -61,14 +77,13 @@ export function MealCard({ meal, di, si, onOpen, onSelect, onRegen, onValidate, 
   // ── Carte normale ──
   return (
     <div
-      ref={dragRef}
       className={`${styles.card} ${meal._ai ? styles.aiValidated : ''} ${dragOver ? styles.dragOver : ''}`}
       onClick={() => onOpen(meal, di, si)}
       draggable
-      onDragStart={e => { e.dataTransfer.setData('text/plain', JSON.stringify({ di, si })) }}
-      onDragOver={e => { e.preventDefault(); setDragOver(true) }}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
       onDragLeave={() => setDragOver(false)}
-      onDrop={e => { e.preventDefault(); setDragOver(false); onDrop?.(di, si) }}
+      onDrop={handleDrop}
     >
       <div className={styles.name}>{meal.name}</div>
       <div className={styles.bottom}>
