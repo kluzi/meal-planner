@@ -18,7 +18,7 @@ const wrap = {
 }
 
 export default function App() {
-  const { meals, addMeal } = useMeals()
+  const { meals, addMeal, editMeal, removeMeal: deleteMeal } = useMeals()
   const { monday, slots, loadingWeek, setMeal, removeMeal, swapMeals, prevWeek, nextWeek, getPrevWeekMeals } = usePlanning()
 
   const [screen, setScreen] = useState(S.PLANNING)
@@ -29,6 +29,7 @@ export default function App() {
   const [selSi, setSelSi] = useState(null)
 
   const goBack = useCallback(() => setScreen(S.PLANNING), [])
+  const goBackToLibrary = useCallback(() => setScreen(S.LIBRARY), [])
 
   const openDetail = useCallback((meal, di, si) => {
     setDetailMeal(meal); setDetailDi(di); setDetailSi(si)
@@ -42,6 +43,13 @@ export default function App() {
       setScreen(S.SELECTOR)
     }
   }, [detailDi, detailSi, removeMeal])
+
+  const handleDelete = useCallback(() => {
+    if (detailMeal) {
+      deleteMeal(detailMeal.id)
+      setScreen(S.LIBRARY)
+    }
+  }, [detailMeal, deleteMeal])
 
   const openSelector = useCallback((di, si) => {
     setSelDi(di); setSelSi(si)
@@ -93,6 +101,8 @@ export default function App() {
     if (meal) setMeal(di, si, { ...meal, _ai:true, _aiPending:false })
   }, [slots, setMeal])
 
+  const fromLibrary = detailDi === null && detailSi === null
+
   return (
     <div style={wrap}>
       {screen === S.PLANNING && (
@@ -106,13 +116,19 @@ export default function App() {
         />
       )}
       {screen === S.DETAIL && (
-        <DetailScreen meal={detailMeal} di={detailDi} si={detailSi} onBack={goBack} onRemove={handleRemove} />
+        <DetailScreen
+          meal={detailMeal} di={detailDi} si={detailSi}
+          onBack={fromLibrary ? goBackToLibrary : goBack}
+          onRemove={handleRemove}
+          onDelete={fromLibrary ? handleDelete : undefined}
+          onEdit={editMeal}
+        />
       )}
       {screen === S.SELECTOR && (
         <SelectorScreen meals={meals} slots={slots} monday={monday} di={selDi} si={selSi} onBack={goBack} onConfirm={handleConfirm} />
       )}
       {screen === S.LIBRARY && (
-        <LibraryScreen meals={meals} onBack={goBack} onOpenDetail={openDetail} onAdd={() => {}} />
+        <LibraryScreen meals={meals} onBack={goBack} onOpenDetail={openDetail} onAdd={addMeal} />
       )}
     </div>
   )
