@@ -60,8 +60,13 @@ export function DetailScreen({ meal, di, si, onBack, onRemove, onDelete, onEdit 
   useEffect(() => {
     if (!meal?.name) return
     setPhotoUrl(null)
-    const query = encodeURIComponent(meal.name + ' food')
-    setPhotoUrl(`https://source.unsplash.com/600x300/?${query}`)
+    const query = encodeURIComponent(meal.name)
+    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${query}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data?.thumbnail?.source) setPhotoUrl(data.thumbnail.source)
+      })
+      .catch(() => {})
   }, [meal?.name])
 
   if (!meal) return null
