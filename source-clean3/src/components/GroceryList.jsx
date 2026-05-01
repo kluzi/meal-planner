@@ -53,23 +53,18 @@ export function GroceryList({ slots }) {
 
   const toggle = (ing) => setChecked(prev => ({ ...prev, [ing]: !prev[ing] }))
 
-  const nonEmpty = cats.filter(c => c.length > 0)
-
-  if (nonEmpty.length === 0) {
-    return <div style={{ fontSize: 12, color: 'var(--text-3)', padding: '8px 0' }}>Aucun ingrédient — ajoutez des repas au planning.</div>
-  }
-
   return (
     <div>
       <div className={styles.grid}>
         {GROCERY_CATS.map((cat, ci) => (
-          cats[ci].length === 0 ? null : (
-            <div key={ci} className={styles.col}>
-              <div className={styles.colTitle}>
-                <span>{cat.icon}</span>
-                <span>{cat.label}</span>
-              </div>
-              {cats[ci].map(ing => (
+          <div key={ci} className={styles.col}>
+            <div className={styles.colTitle}>
+              <span>{cat.icon}</span>
+              <span>{cat.label}</span>
+            </div>
+            {cats[ci].length === 0
+              ? <div className={styles.empty}>—</div>
+              : cats[ci].map(ing => (
                 <div
                   key={ing}
                   className={`${styles.item} ${checked[ing] ? styles.checkedItem : ''} ${newIngs.has(ing) ? styles.newIng : ''}`}
@@ -80,9 +75,9 @@ export function GroceryList({ slots }) {
                   />
                   <span className={styles.label}>{ing}</span>
                 </div>
-              ))}
-            </div>
-          )
+              ))
+            }
+          </div>
         ))}
       </div>
 
