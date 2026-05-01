@@ -27,7 +27,6 @@ export function SelectorScreen({ meals, slots, monday, di, si, onBack, onConfirm
 
   const filtered = useMemo(() => {
     return meals
-      .filter(m => !usedNames.has(m.name))
       .filter(m => activeTags.size === 0 || [...activeTags].every(t => m.tags.includes(t)))
       .filter(m => !query || m.name.toLowerCase().includes(query.toLowerCase()))
       .sort((a, b) => a.name.localeCompare(b.name, 'fr'))
