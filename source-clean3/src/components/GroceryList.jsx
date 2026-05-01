@@ -4,7 +4,7 @@ import { GROCERY_CATS, ING_CAT } from '../lib/constants'
 import styles from './GroceryList.module.css'
 
 // Estimation des prix par catégorie (Paris, 2026)
-const CAT_PRICE = [2.0, 4.5, 1.5, 2.5, 3.0, 1.0]
+const CAT_PRICE = [2.5, 5.0, 1.8, 2.0, 2.5, 0.8]
 
 export function GroceryList({ slots }) {
   const [checked, setChecked] = useState({})
@@ -27,15 +27,15 @@ export function GroceryList({ slots }) {
     let min = 0, max = 0
     cats.forEach((items, ci) => {
       const n = items.length
-      min += n * CAT_PRICE[ci] * 0.7
-      max += n * CAT_PRICE[ci] * 1.3
+      min += n * CAT_PRICE[ci] * 0.9
+      max += n * CAT_PRICE[ci] * 1.1
     })
 
     return {
       cats,
       totalCount: seen.size,
-      priceMin: Math.round(min / 5) * 5,
-      priceMax: Math.round(max / 5) * 5,
+      priceMin: Math.round(min / 5) * 5 || 5,
+      priceMax: Math.round(max / 5) * 5 || 10,
     }
   }, [slots])
 
