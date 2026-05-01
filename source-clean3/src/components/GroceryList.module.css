@@ -66,3 +66,36 @@
 }
 
 .label { flex: 1; }
+
+/* Prix estimation */
+.priceRow {
+  margin-top: 10px;
+}
+
+.priceCard {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 10px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0.5px solid rgba(13, 158, 130, 0.2);
+}
+
+.priceLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.priceValue {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.priceSub {
+  font-size: 10px;
+  color: var(--text-3);
+}
