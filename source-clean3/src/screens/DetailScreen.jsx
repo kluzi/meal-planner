@@ -1,5 +1,5 @@
 // src/screens/DetailScreen.jsx
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Tag } from '../components/Tag'
 import styles from './DetailScreen.module.css'
 
@@ -55,19 +55,6 @@ export function DetailScreen({ meal, di, si, onBack, onRemove, onDelete, onEdit 
   const [ings, setIngs] = useState('')
   const [steps, setSteps] = useState('')
   const [saving, setSaving] = useState(false)
-  const [photoUrl, setPhotoUrl] = useState(null)
-
-  useEffect(() => {
-    if (!meal?.name) return
-    setPhotoUrl(null)
-    const query = encodeURIComponent(meal.name)
-    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${query}`)
-      .then(r => r.json())
-      .then(data => {
-        if (data?.thumbnail?.source) setPhotoUrl(data.thumbnail.source)
-      })
-      .catch(() => {})
-  }, [meal?.name])
 
   if (!meal) return null
 
@@ -191,17 +178,6 @@ export function DetailScreen({ meal, di, si, onBack, onRemove, onDelete, onEdit 
       </div>
 
       <div className={styles.scroll}>
-        {photoUrl && (
-          <div style={{ margin: '0 0 16px', borderRadius: 14, overflow: 'hidden', height: 180 }}>
-            <img
-              src={photoUrl}
-              alt={meal.name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              onError={() => setPhotoUrl(null)}
-            />
-          </div>
-        )}
-
         <div className={styles.name}>{meal.name}</div>
 
         {(meal.tags || []).length > 0 && (
