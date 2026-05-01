@@ -1,7 +1,7 @@
 // src/screens/PlanningScreen.jsx
 import { useCallback, useRef } from 'react'
 import { MealCard } from '../components/MealCard'
-import { GroceryList } from '../components/GroceryList'
+import { GroceryList, useGroceryCount } from '../components/GroceryList'
 import { DAY_NAMES, addDays, formatWeekLabel, isToday } from '../lib/dates'
 import { RECAP_FILTERS } from '../lib/constants'
 import styles from './PlanningScreen.module.css'
@@ -48,15 +48,25 @@ const MoonIcon = () => (
   </svg>
 )
 
+const RepeatIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+    <path d="M17 1l4 4-4 4" stroke="#0D9E82" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M3 11V9a4 4 0 014-4h14" stroke="#0D9E82" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M7 23l-4-4 4-4" stroke="#0D9E82" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M21 13v2a4 4 0 01-4 4H3" stroke="#0D9E82" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
 export function PlanningScreen({
   monday, slots, loadingWeek, meals,
   onPrevWeek, onNextWeek,
   onOpenDetail, onOpenSelector,
   onSetMeal, onSwapMeals,
   onRegenSlot, onValidateSlot,
-  onOpenLibrary, onTriggerAI,
+  onOpenLibrary, onTriggerAI, onCopyPrevWeek,
 }) {
   const dragSrc = useRef(null)
+  const groceryCount = useGroceryCount(slots)
 
   const handleDragStart = useCallback((di, si) => {
     dragSrc.current = { di, si }
@@ -83,6 +93,9 @@ export function PlanningScreen({
           <button className={styles.iconBtn} onClick={onTriggerAI} title="Générer avec l'IA">
             <StarIcon />
           </button>
+          <button className={styles.iconBtn} onClick={onCopyPrevWeek} title="Reprendre la semaine dernière">
+            <RepeatIcon />
+          </button>
           <button className={`${styles.iconBtn} ${styles.iconBtnAccent}`} onClick={onOpenLibrary} title="Mes repas">
             <GridIcon />
           </button>
@@ -102,7 +115,6 @@ export function PlanningScreen({
       {/* ── Scroll body ── */}
       <div className={styles.scrollBody}>
         <div className={styles.gridWrap}>
-          {/* Colonne latérale */}
           <div className={styles.sideCol}>
             <div className={styles.sideSpacer} />
             <div className={styles.sidePill}>
@@ -115,7 +127,6 @@ export function PlanningScreen({
             </div>
           </div>
 
-          {/* Grille */}
           <div className={styles.gridCols}>
             <div className={styles.dayHeaders}>
               {Array.from({ length: 7 }, (_, di) => {
@@ -169,7 +180,14 @@ export function PlanningScreen({
         </div>
 
         {/* ── Liste de courses ── */}
-        <div className={styles.sectionHdr}>Liste de courses</div>
+        <div className={styles.sectionHdr}>
+          Liste de courses
+          {groceryCount > 0 && (
+            <span style={{ fontSize: 12, fontWeight: 400, color: 'var(--text-3)', marginLeft: 6 }}>
+              {groceryCount} articles
+            </span>
+          )}
+        </div>
         <GroceryList slots={slots} />
       </div>
     </div>
