@@ -71,16 +71,14 @@ export default function App() {
         if (!slots[di]?.[si]) empty.push({ di, si })
     if (!empty.length) return
     const scored = [...meals].map(m => ({ ...m, score: (usedNames.has(m.name)?-20:0)+(prevNames.has(m.name)?-8:0)+Math.random()*3 })).sort((a,b)=>b.score-a.score)
-    const assigned = new Set(usedNames)
     let i = 0
     const next = () => {
       if (i >= empty.length) return
       const { di, si } = empty[i]
-      let pool = scored.filter(m => !assigned.has(m.name))
-      if (!pool.length) pool = scored
+      const pool = scored.length ? scored : [...meals]
       const pick = pool[0]
       setMeal(di, si, { id:pick.id, name:pick.name, tags:[...(pick.tags||[])], ings:pick.ings||[], steps:pick.steps||[], _ai:true, _aiPending:true })
-      assigned.add(pick.name); scored.splice(scored.indexOf(pick),1); i++
+      scored.splice(scored.indexOf(pick),1); i++
       setTimeout(next, 160)
     }
     setTimeout(next, 200)
@@ -101,6 +99,15 @@ export default function App() {
     if (meal) setMeal(di, si, { ...meal, _ai:true, _aiPending:false })
   }, [slots, setMeal])
 
+  const copyPrevWeek = useCallback(() => {
+    const prevSlots = getPrevWeekMeals()
+    const hasContent = prevSlots.flat().some(Boolean)
+    if (!hasContent) return
+    for (let di = 0; di < 7; di++)
+      for (let si = 0; si < 2; si++)
+        if (prevSlots[di]?.[si]) setMeal(di, si, { ...prevSlots[di][si], _ai: false, _aiPending: false })
+  }, [getPrevWeekMeals, setMeal])
+
   const fromLibrary = detailDi === null && detailSi === null
 
   return (
@@ -113,6 +120,7 @@ export default function App() {
           onSetMeal={setMeal} onSwapMeals={swapMeals}
           onRegenSlot={regenSlot} onValidateSlot={validateSlot}
           onOpenLibrary={() => setScreen(S.LIBRARY)} onTriggerAI={triggerAI}
+          onCopyPrevWeek={copyPrevWeek}
         />
       )}
       {screen === S.DETAIL && (
