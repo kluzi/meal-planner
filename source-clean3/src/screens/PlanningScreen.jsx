@@ -86,7 +86,6 @@ export function PlanningScreen({
 
   return (
     <div style={{display:'flex', flexDirection:'column', height:'100%', overflowY:'auto'}}>
-      {/* ── Topbar ── */}
       <div className={styles.topbar}>
         <div className={styles.pageTitle}>Planning</div>
         <div className={styles.topbarRight}>
@@ -102,7 +101,6 @@ export function PlanningScreen({
         </div>
       </div>
 
-      {/* ── Week nav ── */}
       <div className={styles.weekNavRow}>
         <div className={styles.weekNavCard}>
           <button className={styles.navArr} onClick={onPrevWeek}><ChevronLeft /></button>
@@ -112,7 +110,6 @@ export function PlanningScreen({
         {loadingWeek && <span className={styles.loadingDot} />}
       </div>
 
-      {/* ── Grille ── */}
       <div style={{padding: '0 18px'}}>
         <div className={styles.gridWrap}>
           <div className={styles.sideCol}>
@@ -163,7 +160,6 @@ export function PlanningScreen({
           </div>
         </div>
 
-        {/* ── Récapitulatif ── */}
         <div className={styles.recapRow}>
           <div className={styles.recapBand}>
             {RECAP_FILTERS.map(r => {
@@ -179,7 +175,6 @@ export function PlanningScreen({
           </div>
         </div>
 
-        {/* ── Liste de courses ── */}
         <div className={styles.sectionHdr}>
           Liste de courses
           {groceryCount > 0 && (
