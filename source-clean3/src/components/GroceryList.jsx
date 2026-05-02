@@ -3,7 +3,6 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import { GROCERY_CATS, ING_CAT } from '../lib/constants'
 import styles from './GroceryList.module.css'
 
-// Estimation des prix par catégorie (Paris, 2026)
 const CAT_PRICE = [2.5, 5.0, 1.8, 2.0, 2.5, 0.8]
 
 export function GroceryList({ slots }) {
@@ -14,7 +13,7 @@ export function GroceryList({ slots }) {
   const { cats, totalCount, priceMin, priceMax } = useMemo(() => {
     const cats = GROCERY_CATS.map(() => [])
     const seen = new Set()
-    slots.flat().filter(Boolean).forEach(meal => {
+    slots.flat().flatMap(s => [s?.adult, s?.kid]).filter(Boolean).forEach(meal => {
       (meal.ings || []).forEach(ing => {
         if (!ing || seen.has(ing)) return
         seen.add(ing)
@@ -40,7 +39,9 @@ export function GroceryList({ slots }) {
   }, [slots])
 
   useEffect(() => {
-    const current = new Set(slots.flat().filter(Boolean).flatMap(m => m.ings || []))
+    const current = new Set(
+      slots.flat().flatMap(s => [s?.adult, s?.kid]).filter(Boolean).flatMap(m => m.ings || [])
+    )
     const prev = prevIngsRef.current
     const added = new Set([...current].filter(i => !prev.has(i)))
     setNewIngs(added)
@@ -101,7 +102,7 @@ export function GroceryList({ slots }) {
 export function useGroceryCount(slots) {
   return useMemo(() => {
     const seen = new Set()
-    slots.flat().filter(Boolean).forEach(meal => {
+    slots.flat().flatMap(s => [s?.adult, s?.kid]).filter(Boolean).forEach(meal => {
       (meal.ings || []).forEach(ing => { if (ing) seen.add(ing) })
     })
     return seen.size
