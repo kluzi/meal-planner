@@ -146,11 +146,14 @@
 
 .footer {
   flex-shrink: 0;
-  background: var(--card);
-  border-top: 0.5px solid var(--border);
   padding: 12px 16px;
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+  border-top: 0.5px solid var(--border);
+  background: var(--card);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
   padding-bottom: calc(12px + var(--safe-bottom));
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
 }
 
 .btnConfirm {
@@ -171,3 +174,9 @@
 .btnConfirm:hover { background: var(--accent-hover); }
 .btnConfirm:active { opacity: 0.85; }
 .btnConfirm:disabled { opacity: 0.35; cursor: default; }
+
+.btnKid {
+  background: #3543C4;
+  margin-top: 8px;
+}
+.btnKid:hover { background: #2a35a0; }
