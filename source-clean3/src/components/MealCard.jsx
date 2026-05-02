@@ -9,8 +9,51 @@ const StarIcon = () => (
   </svg>
 )
 
-export function MealCard({ meal, di, si, onOpen, onSelect, onRegen, onValidate, onDragStart, onDrop }) {
+const KidIcon = () => (
+  <svg width="9" height="9" viewBox="0 0 24 24" fill="none">
+    <path d="M12 2a5 5 0 100 10A5 5 0 0012 2zM4 20a8 8 0 0116 0" stroke="#3543C4" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
+)
+
+function MealPart({ meal, isKid, onRegen, onValidate, di, si }) {
+  if (!meal) return null
+  const isPending = meal._ai && meal._aiPending
+
+  return (
+    <div className={`${styles.part} ${isKid ? styles.kidPart : ''} ${isPending ? styles.aiPending : ''}`}>
+      {isPending && (
+        <div className={styles.aiLabel}>
+          <StarIcon /> Suggestion IA
+        </div>
+      )}
+      {isKid && !isPending && (
+        <div className={styles.kidLabel}>
+          <KidIcon /> Variante enfant
+        </div>
+      )}
+      <div className={styles.name}>{meal.name}</div>
+      {!isPending && (
+        <div className={styles.tags}>
+          {(meal.tags || []).map(t => <Tag key={t} tag={t} size="sm" />)}
+        </div>
+      )}
+      {isPending && (
+        <div className={styles.aiActions}>
+          <button className={styles.aiRegen} onClick={e => { e.stopPropagation(); onRegen(di, si, isKid ? 'kid' : 'adult') }}>↺</button>
+          <button className={styles.aiValidate} onClick={e => { e.stopPropagation(); onValidate(di, si, isKid ? 'kid' : 'adult') }}>✓ OK</button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export function MealCard({ slot, di, si, onOpen, onSelect, onRegen, onValidate, onDragStart, onDrop }) {
   const [dragOver, setDragOver] = useState(false)
+
+  const adult = slot?.adult ?? null
+  const kid = slot?.kid ?? null
+  const isEmpty = !adult && !kid
+  const isEveningSlot = si === 1
 
   const handleDragStart = (e) => {
     e.dataTransfer.setData('text/plain', JSON.stringify({ di, si }))
@@ -29,18 +72,15 @@ export function MealCard({ meal, di, si, onOpen, onSelect, onRegen, onValidate, 
     setDragOver(false)
     try {
       const src = JSON.parse(e.dataTransfer.getData('text/plain'))
-      if (src.di !== di || src.si !== si) {
-        onDrop?.(di, si)
-      }
+      if (src.di !== di || src.si !== si) onDrop?.(di, si)
     } catch {}
   }
 
-  // ── Carte vide ──
-  if (!meal) {
+  if (isEmpty) {
     return (
       <div
         className={`${styles.card} ${styles.empty} ${dragOver ? styles.dragOver : ''}`}
-        onClick={() => onSelect(di, si)}
+        onClick={() => onSelect(di, si, 'choose')}
         onDragOver={handleDragOver}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
@@ -50,47 +90,23 @@ export function MealCard({ meal, di, si, onOpen, onSelect, onRegen, onValidate, 
     )
   }
 
-  // ── Suggestion IA en attente ──
-  if (meal._ai && meal._aiPending) {
-    return (
-      <div
-        className={`${styles.card} ${styles.aiPending} ${dragOver ? styles.dragOver : ''}`}
-        onClick={() => onOpen(meal, di, si)}
-        draggable
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragLeave={() => setDragOver(false)}
-        onDrop={handleDrop}
-      >
-        <div className={styles.aiLabel}>
-          <StarIcon /> Suggestion IA
-        </div>
-        <div className={styles.name}>{meal.name}</div>
-        <div className={styles.aiActions}>
-          <button className={styles.aiRegen} onClick={e => { e.stopPropagation(); onRegen(di, si) }}>↺ Autre</button>
-          <button className={styles.aiValidate} onClick={e => { e.stopPropagation(); onValidate(di, si) }}>✓ OK</button>
-        </div>
-      </div>
-    )
-  }
-
-  // ── Carte normale ──
   return (
     <div
-      className={`${styles.card} ${meal._ai ? styles.aiValidated : ''} ${dragOver ? styles.dragOver : ''}`}
-      onClick={() => onOpen(meal, di, si)}
+      className={`${styles.card} ${dragOver ? styles.dragOver : ''}`}
+      onClick={() => onOpen(slot, di, si)}
       draggable
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragLeave={() => setDragOver(false)}
       onDrop={handleDrop}
     >
-      <div className={styles.name}>{meal.name}</div>
-      <div className={styles.bottom}>
-        <div className={styles.tags}>
-          {(meal.tags || []).map(t => <Tag key={t} tag={t} size="sm" />)}
-        </div>
-      </div>
+      <MealPart meal={adult} isKid={false} onRegen={onRegen} onValidate={onValidate} di={di} si={si} />
+      {isEveningSlot && kid && (
+        <>
+          <div className={styles.divider} />
+          <MealPart meal={kid} isKid={true} onRegen={onRegen} onValidate={onValidate} di={di} si={si} />
+        </>
+      )}
     </div>
   )
 }
