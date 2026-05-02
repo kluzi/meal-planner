@@ -96,7 +96,6 @@
 }
 .aiValidate:hover { background: var(--accent-hover); }
 
-/* IA validée */
 @keyframes validatePop {
   0%   { box-shadow: 0 0 0 4px rgba(13, 158, 130, 0.4); }
   100% { box-shadow: var(--shadow); }
@@ -127,4 +126,34 @@
   display: flex;
   flex-wrap: wrap;
   gap: 2px;
+}
+
+/* Multi-part card */
+.part {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.kidPart {
+  opacity: 0.9;
+}
+
+.kidLabel {
+  font-size: 8px;
+  font-weight: 600;
+  color: #3543C4;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 2px;
+  flex-shrink: 0;
+}
+
+.divider {
+  height: 0.5px;
+  background: var(--border);
+  margin: 4px 0;
+  flex-shrink: 0;
 }
