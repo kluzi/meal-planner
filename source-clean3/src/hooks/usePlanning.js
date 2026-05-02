@@ -9,17 +9,31 @@ const HAS_AIRTABLE =
   import.meta.env.VITE_AIRTABLE_BASE_ID &&
   import.meta.env.VITE_AIRTABLE_BASE_ID !== 'your_base_id_here'
 
-// Cache local en mémoire : { "2024-04-22": { id, slots } }
 const cache = {}
+
+export function emptySlot() { return { adult: null, kid: null } }
+export function emptyWeekSlotsV2() {
+  return Array.from({ length: 7 }, () => [emptySlot(), emptySlot()])
+}
+
+function migrateSlots(slots) {
+  if (!slots) return emptyWeekSlotsV2()
+  return slots.map(daySlots =>
+    (daySlots || []).map(slot => {
+      if (!slot) return emptySlot()
+      if (slot.adult !== undefined || slot.kid !== undefined) return slot
+      return { adult: slot, kid: null }
+    })
+  )
+}
 
 export function usePlanning() {
   const [monday, setMonday] = useState(() => getMondayOf(new Date()))
-  const [slots, setSlots] = useState(emptyWeekSlots)
+  const [slots, setSlots] = useState(emptyWeekSlotsV2)
   const [planningId, setPlanningId] = useState(null)
   const [loadingWeek, setLoadingWeek] = useState(false)
   const saveTimer = useRef(null)
 
-  // Charge la semaine active
   useEffect(() => {
     const key = toISODate(monday)
     if (cache[key]) {
@@ -28,7 +42,7 @@ export function usePlanning() {
       return
     }
     if (!HAS_AIRTABLE) {
-      const empty = emptyWeekSlots()
+      const empty = emptyWeekSlotsV2()
       cache[key] = { id: null, slots: empty }
       setSlots(empty)
       setPlanningId(null)
@@ -37,7 +51,8 @@ export function usePlanning() {
     setLoadingWeek(true)
     fetchPlanning(key)
       .then(data => {
-        const s = data?.slots || emptyWeekSlots()
+        const raw = data?.slots || null
+        const s = migrateSlots(raw)
         const id = data?.id || null
         cache[key] = { id, slots: s }
         setSlots(s)
@@ -47,7 +62,6 @@ export function usePlanning() {
       .finally(() => setLoadingWeek(false))
   }, [monday])
 
-  // Auto-save avec debounce 1s
   const persist = useCallback((newSlots, id) => {
     if (!HAS_AIRTABLE) return
     clearTimeout(saveTimer.current)
@@ -72,10 +86,15 @@ export function usePlanning() {
     persist(newSlots, planningId)
   }, [monday, planningId, persist])
 
-  const setMeal = useCallback((di, si, meal) => {
+  const setMeal = useCallback((di, si, meal, role = 'adult') => {
     setSlots(prev => {
-      const next = prev.map(row => [...row])
-      next[di][si] = meal
+      const next = prev.map(row => row.map(slot => ({ ...slot })))
+      const slot = next[di][si]
+      if (role === 'kid') {
+        next[di][si] = { ...slot, kid: meal }
+      } else {
+        next[di][si] = { ...slot, adult: meal }
+      }
       const key = toISODate(monday)
       cache[key] = { ...cache[key], slots: next }
       persist(next, planningId)
@@ -83,13 +102,13 @@ export function usePlanning() {
     })
   }, [monday, planningId, persist])
 
-  const removeMeal = useCallback((di, si) => {
-    setMeal(di, si, null)
+  const removeMeal = useCallback((di, si, role = 'adult') => {
+    setMeal(di, si, null, role)
   }, [setMeal])
 
   const swapMeals = useCallback((di1, si1, di2, si2) => {
     setSlots(prev => {
-      const next = prev.map(row => [...row])
+      const next = prev.map(row => row.map(slot => ({ ...slot })))
       ;[next[di1][si1], next[di2][si2]] = [next[di2][si2], next[di1][si1]]
       const key = toISODate(monday)
       cache[key] = { ...cache[key], slots: next }
@@ -101,22 +120,14 @@ export function usePlanning() {
   const prevWeek = useCallback(() => setMonday(m => addDays(m, -7)), [])
   const nextWeek = useCallback(() => setMonday(m => addDays(m, 7)), [])
 
-  // Données de la semaine précédente (pour anti-répétition IA)
   const getPrevWeekMeals = useCallback(() => {
     const prevKey = toISODate(addDays(monday, -7))
-    return cache[prevKey]?.slots || emptyWeekSlots()
+    return cache[prevKey]?.slots || emptyWeekSlotsV2()
   }, [monday])
 
   return {
-    monday,
-    slots,
-    loadingWeek,
-    setMeal,
-    removeMeal,
-    swapMeals,
-    updateSlots,
-    prevWeek,
-    nextWeek,
-    getPrevWeekMeals,
+    monday, slots, loadingWeek,
+    setMeal, removeMeal, swapMeals, updateSlots,
+    prevWeek, nextWeek, getPrevWeekMeals,
   }
 }
