@@ -55,7 +55,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 18px 8;
+  padding: 10px 18px 12px;
   flex-shrink: 0;
 }
 
