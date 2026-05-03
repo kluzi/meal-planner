@@ -10,8 +10,11 @@ const StarIcon = () => (
 )
 
 const KidIcon = () => (
-  <svg width="9" height="9" viewBox="0 0 24 24" fill="none">
-    <path d="M12 2a5 5 0 100 10A5 5 0 0012 2zM4 20a8 8 0 0116 0" stroke="#3543C4" strokeWidth="2" strokeLinecap="round"/>
+  <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="10" stroke="#3543C4" strokeWidth="1.8"/>
+    <path d="M8 14s1.5 2 4 2 4-2 4-2" stroke="#3543C4" strokeWidth="1.8" strokeLinecap="round"/>
+    <circle cx="9" cy="10" r="1" fill="#3543C4"/>
+    <circle cx="15" cy="10" r="1" fill="#3543C4"/>
   </svg>
 )
 
@@ -53,7 +56,6 @@ export function MealCard({ slot, di, si, onOpen, onSelect, onRegen, onValidate, 
   const adult = slot?.adult ?? null
   const kid = slot?.kid ?? null
   const isEmpty = !adult && !kid
-  const isEveningSlot = si === 1
 
   const handleDragStart = (e) => {
     e.dataTransfer.setData('text/plain', JSON.stringify({ di, si }))
@@ -101,7 +103,7 @@ export function MealCard({ slot, di, si, onOpen, onSelect, onRegen, onValidate, 
       onDrop={handleDrop}
     >
       <MealPart meal={adult} isKid={false} onRegen={onRegen} onValidate={onValidate} di={di} si={si} />
-      {isEveningSlot && kid && (
+      {kid && (
         <>
           <div className={styles.divider} />
           <MealPart meal={kid} isKid={true} onRegen={onRegen} onValidate={onValidate} di={di} si={si} />
