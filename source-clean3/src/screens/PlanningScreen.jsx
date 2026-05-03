@@ -57,13 +57,21 @@ const RepeatIcon = () => (
   </svg>
 )
 
+const TrashIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+    <polyline points="3 6 5 6 21 6" stroke="#C0244A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" stroke="#C0244A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M10 11v6M14 11v6" stroke="#C0244A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
 export function PlanningScreen({
   monday, slots, loadingWeek, meals,
   onPrevWeek, onNextWeek,
   onOpenDetail, onOpenSelector,
   onSetMeal, onSwapMeals,
   onRegenSlot, onValidateSlot,
-  onOpenLibrary, onTriggerAI, onCopyPrevWeek,
+  onOpenLibrary, onTriggerAI, onCopyPrevWeek, onResetWeek,
 }) {
   const dragSrc = useRef(null)
   const groceryCount = useGroceryCount(slots)
@@ -184,6 +192,21 @@ export function PlanningScreen({
           )}
         </div>
         <GroceryList slots={slots} />
+      </div>
+
+      <div style={{ display:'flex', justifyContent:'flex-end', padding:'8px 18px 24px' }}>
+        <button
+          onClick={onResetWeek}
+          style={{
+            display:'flex', alignItems:'center', gap:6,
+            fontSize:12, fontWeight:500, color:'#C0244A',
+            background:'rgba(192,36,74,0.07)', border:'none',
+            borderRadius:10, padding:'8px 14px', cursor:'pointer',
+          }}
+        >
+          <TrashIcon />
+          Réinitialiser la semaine
+        </button>
       </div>
     </div>
   )
