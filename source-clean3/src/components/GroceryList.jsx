@@ -91,7 +91,6 @@ export function GroceryList({ slots }) {
             </svg>
             <span className={styles.priceLabel}>Estimation courses</span>
             <span className={styles.priceValue}>{priceMin}–{priceMax} €</span>
-            <span className={styles.priceSub}>Paris · {totalCount} ingrédients</span>
           </div>
         </div>
       )}
