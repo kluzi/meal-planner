@@ -73,7 +73,7 @@ export default function App() {
       for (let si = 0; si < 2; si++) {
         const slot = slots[di]?.[si]
         if (!slot?.adult) empty.push({ di, si, role: 'adult' })
-        if (si === 1 && !slot?.kid) empty.push({ di, si, role: 'kid' })
+        if (!slot?.kid) empty.push({ di, si, role: 'kid' })
       }
     if (!empty.length) return
 
@@ -162,7 +162,7 @@ export default function App() {
         <SelectorScreen
           meals={meals} slots={slots} monday={monday}
           di={selDi} si={selSi} mode={selMode}
-          onBack={detailDi !== null ? goBackToDetail : goBack}
+          onBack={detailDi !== null && selDi === detailDi && selSi === detailSi ? goBackToDetail : goBack}
           onConfirm={handleConfirm}
         />
       )}
