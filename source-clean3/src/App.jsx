@@ -122,6 +122,14 @@ export default function App() {
     if (meal) setMeal(di, si, { ...meal, _ai:true, _aiPending:false }, role)
   }, [slots, setMeal])
 
+  const resetWeek = useCallback(() => {
+    for (let di = 0; di < 7; di++)
+      for (let si = 0; si < 2; si++) {
+        setMeal(di, si, null, 'adult')
+        setMeal(di, si, null, 'kid')
+      }
+  }, [setMeal])
+
   const copyPrevWeek = useCallback(() => {
     const prevSlots = getPrevWeekMeals()
     const hasContent = prevSlots.flat().some(s => s?.adult || s?.kid)
@@ -144,7 +152,7 @@ export default function App() {
           onSetMeal={setMeal} onSwapMeals={swapMeals}
           onRegenSlot={regenSlot} onValidateSlot={validateSlot}
           onOpenLibrary={() => setScreen(S.LIBRARY)} onTriggerAI={triggerAI}
-          onCopyPrevWeek={copyPrevWeek}
+          onCopyPrevWeek={copyPrevWeek} onResetWeek={resetWeek}
         />
       )}
       {screen === S.DETAIL && (
