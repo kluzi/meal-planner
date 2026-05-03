@@ -11,7 +11,10 @@ const BackIcon = () => (
 
 const KidIcon = () => (
   <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-    <path d="M12 2a5 5 0 100 10A5 5 0 0012 2zM4 20a8 8 0 0116 0" stroke="#3543C4" strokeWidth="2" strokeLinecap="round"/>
+    <circle cx="12" cy="12" r="10" stroke="#3543C4" strokeWidth="1.8"/>
+    <path d="M8 14s1.5 2 4 2 4-2 4-2" stroke="#3543C4" strokeWidth="1.8" strokeLinecap="round"/>
+    <circle cx="9" cy="10" r="1" fill="#3543C4"/>
+    <circle cx="15" cy="10" r="1" fill="#3543C4"/>
   </svg>
 )
 
@@ -202,7 +205,6 @@ export function DetailScreen({ slot, di, si, onBack, onRemoveAdult, onRemoveKid,
 
   const adult = slot.adult ?? null
   const kid = slot.kid ?? null
-  const isEvening = si === 1
 
   const DAY_NAMES = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
   const slotLabel = di !== null
@@ -231,15 +233,13 @@ export function DetailScreen({ slot, di, si, onBack, onRemoveAdult, onRemoveKid,
             onAdd={onAddAdult}
             onEdit={onEdit}
           />
-          {isEvening && (
-            <MealZone
-              meal={kid}
-              isKid={true}
-              onRemove={onRemoveKid}
-              onAdd={onAddKid}
-              onEdit={onEdit}
-            />
-          )}
+          <MealZone
+            meal={kid}
+            isKid={true}
+            onRemove={onRemoveKid}
+            onAdd={onAddKid}
+            onEdit={onEdit}
+          />
         </div>
       </div>
     </div>
