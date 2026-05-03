@@ -59,9 +59,9 @@ const RepeatIcon = () => (
 
 const TrashIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-    <polyline points="3 6 5 6 21 6" stroke="#C0244A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" stroke="#C0244A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M10 11v6M14 11v6" stroke="#C0244A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <polyline points="3 6 5 6 21 6" stroke="#0D9E82" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" stroke="#0D9E82" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M10 11v6M14 11v6" stroke="#0D9E82" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 
@@ -168,7 +168,7 @@ export function PlanningScreen({
           </div>
         </div>
 
-        <div className={styles.recapRow}>
+        <div className={styles.recapRow} style={{ justifyContent:'space-between', alignItems:'center' }}>
           <div className={styles.recapBand}>
             {RECAP_FILTERS.map(r => {
               const n = counts[r.key]
@@ -181,6 +181,19 @@ export function PlanningScreen({
               )
             })}
           </div>
+          <button
+            onClick={onResetWeek}
+            style={{
+              display:'flex', alignItems:'center', gap:5,
+              fontSize:11, fontWeight:600, color:'var(--text-1)',
+              background:'var(--card)', border:'0.5px solid var(--border)',
+              borderRadius:10, padding:'7px 12px', cursor:'pointer',
+              boxShadow:'var(--shadow)', flexShrink:0,
+            }}
+          >
+            <TrashIcon />
+            Réinitialiser la semaine
+          </button>
         </div>
 
         <div className={styles.sectionHdr}>
@@ -192,21 +205,6 @@ export function PlanningScreen({
           )}
         </div>
         <GroceryList slots={slots} />
-      </div>
-
-      <div style={{ display:'flex', justifyContent:'flex-end', padding:'8px 18px 24px' }}>
-        <button
-          onClick={onResetWeek}
-          style={{
-            display:'flex', alignItems:'center', gap:6,
-            fontSize:12, fontWeight:500, color:'#C0244A',
-            background:'rgba(192,36,74,0.07)', border:'none',
-            borderRadius:10, padding:'8px 14px', cursor:'pointer',
-          }}
-        >
-          <TrashIcon />
-          Réinitialiser la semaine
-        </button>
       </div>
     </div>
   )
